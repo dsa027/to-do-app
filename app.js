@@ -1,6 +1,7 @@
 
 function onReady() {
   let toDos = [];
+  let id = 0;
 
   const addToDoForm = document.getElementById('addToDoForm');
   const newToDoText = document.getElementById('newToDoText');
@@ -11,8 +12,10 @@ function onReady() {
 
     toDos.push({
       title: newToDoText.value,
-      complete: false
+      complete: false,
+      id: id
     });
+    id++;
 
     newToDoText.value = '';
 
@@ -40,7 +43,7 @@ function onReady() {
       delButton.value = "Delete";
       newLi.appendChild(delButton);
       // add listener which will delete the li based on it's id/index
-      delButton.addEventListener('click', deleteLi);
+      delButton.addEventListener('click', event => deleteLi(toDo.id));
 
       // attach newLi to toDoList
       toDoList.appendChild(newLi);
@@ -57,17 +60,9 @@ function onReady() {
 
   renderTheUI();
 
-  var deleteLi = (event) => {
-    let id = event.currentTarget.parentElement.textContent;
-    if (id != -1) {
-      for (var i in toDos) {
-        if (toDos[i].title === id) {
-          toDos.splice(i, 1);
-          renderTheUI();
-          break;
-        }
-      }
-    }
+  var deleteLi = function(id) {
+    toDos = toDos.filter(toDo => toDo.id !== id);
+    renderTheUI();
   };
 }
 
