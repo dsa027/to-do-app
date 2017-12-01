@@ -1,53 +1,76 @@
-var idIdx = -1;
 
 function onReady() {
+  let toDos = [];
+
   const addToDoForm = document.getElementById('addToDoForm');
   const newToDoText = document.getElementById('newToDoText');
   const toDoList = document.getElementById('toDoList');
 
-  addToDoForm.addEventListener('submit', event => {
-      event.preventDefault();
-      // get the text from input
-      let title = newToDoText.value;
-      if (title === '') return;
+  function createNewToDo() {
+    if (!newToDoText.value) return;
 
-      // create new li, input
-      let newLi = document.createElement('li');
-      let checkbox = document.createElement('input');
-      // set the input's type to checkbox
+    toDos.push({
+      title: newToDoText.value,
+      complete: false
+    });
+
+    newToDoText.value = '';
+
+    renderTheUI();
+  }
+
+  function renderTheUI() {
+    const toDoList = document.getElementById('toDoList');
+
+    toDoList.textContent = '';
+
+    toDos.forEach((toDo) => {
+      const newLi = document.createElement('li');
+      newLi.textContent = toDo.title;
+
+      const checkbox = document.createElement('input');
       checkbox.type = "checkbox";
 
-      // set li title, attach checkbox to li
-      newLi.textContent = title;
-      newLi.id = "li" + ++idIdx;
+      toDoList.appendChild(newLi);
       newLi.appendChild(checkbox);
 
       //create and append delete button to newLi
       delButton = document.createElement('input');
       delButton.type = "button";
       delButton.value = "Delete";
-      delButton.id = "del" + idIdx;
       newLi.appendChild(delButton);
       // add listener which will delete the li based on it's id/index
       delButton.addEventListener('click', deleteLi);
 
       // attach newLi to toDoList
       toDoList.appendChild(newLi);
+    });
+  }
+
+  addToDoForm.addEventListener('submit', event => {
+      event.preventDefault();
+      createNewToDo();
 
       // clear input
       newToDoText.value = '';
   });
+
+  renderTheUI();
+
+  var deleteLi = (event) => {
+    let id = event.currentTarget.parentElement.textContent;
+    if (id != -1) {
+      for (var i in toDos) {
+        if (toDos[i].title === id) {
+          toDos.splice(i, 1);
+          renderTheUI();
+          break;
+        }
+      }
+    }
+  };
 }
 
-var deleteLi = (event) => {
-  let id = 'li' + event.currentTarget.id.slice('del'.length);
-  let li = document.getElementById(id);
-  if (li) {
-    toDoList.removeChild(li);
-  }
-};
-
 window.onload = function() {
-  // alert("The window has loaded");
   onReady();
 };
